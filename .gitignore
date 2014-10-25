@@ -1,0 +1,8 @@
+/.project
+/.pydevproject
+/.settings
+
+/dist
+
+*.pyc
+/MANIFEST

@@ -1,0 +1,135 @@
+# -*- coding: utf-8 -*-
+from .log import logger
+import asyncio
+
+
+__all__ = ['VirtualProtocol', 'RealProtocol']
+
+
+class VirtualProtocol(asyncio.Protocol):
+    real_protocol = None
+    protocol_factories = []
+
+    _protocol_detect_buffer = b''
+
+    @classmethod
+    def register_protocol_factory(cls, protocol_factory):
+        cls.protocol_factories.append(protocol_factory)
+
+    def set_real_protocol(self, protocol):
+        self.real_protocol = protocol
+        self.real_protocol.connection_made(self.transport)
+        self.data_received = protocol.data_received
+        self.connection_lost = protocol.connection_lost
+
+    def connection_made(self, transport):
+        self.transport = transport
+        self.peername = '%s:%d' % transport.get_extra_info('peername')
+        self.sockname = '%s:%d' % transport.get_extra_info('sockname')
+
+        logger.debug('连接建立: 远端 %s, 本地 %s', self.peername, self.sockname)
+
+        # 用示例变量替换类变量
+        self.protocol_factories = self.protocol_factories.copy()
+
+    def connection_lost(self, exc):
+        assert not self.real_protocol
+
+        logger.debug('连接断开: %s, 远端 %s, 本地 %s', exc, self.peername, self.sockname)
+
+    def data_received(self, data):
+        assert not self.real_protocol
+
+        data = self._protocol_detect_buffer + data
+
+        for factory in self.protocol_factories[:]:
+            result = factory.protocol_detect(data)
+            if result == factory.YES:
+                logger.debug('协议检测成功: %s 采用 %s 协议', self.peername, factory.__name__)
+                self.set_real_protocol(factory(self))
+                break
+            elif result == factory.NO:
+                self.protocol_factories.remove(factory)
+
+        if not self.protocol_factories:
+            logger.info('不可识别的协议, 断开连接 %s: %r', self.peername, data)
+            self.transport.close()
+        elif self.real_protocol:
+            self.real_protocol.data_received(data)
+        else:
+            self._protocol_detect_buffer = data
+
+
+class RealProtocol:
+    NO = 'NO'
+    YES = 'YES'
+    NOTSURE = 'NOTSURE'
+
+    protocol_features = []      # bytes 列表
+
+    @classmethod
+    def protocol_detect(cls, data):
+        if not cls.protocol_features:
+            raise RuntimeError('未指定协议特征，无法检测.')
+
+        notsure = False
+        for feature in cls.protocol_features:
+            if data.startswith(feature):
+                return cls.YES
+            if feature.startswith(data):
+                # 如果 feature 以 data 开头，说明数据不够，不足以判别
+                notsure = True
+
+        if notsure:
+            return cls.NOTSURE
+
+        return cls.NO
+
+    def __init__(self, virtual_protocol):
+        self.virtual_protocol = virtual_protocol
+
+    def connection_made(self, transport):
+        self.transport = transport
+        self.peername = self.virtual_protocol.peername
+        self.sockname = self.virtual_protocol.sockname
+
+    def connection_lost(self, exc):
+        logger.debug('连接断开: %s, 远端 %s, 本地 %s', exc, self.peername, self.sockname)
+
+    def data_received(self, data):
+        logger.debug('来自 %s : %r', self.peername, data)
+
+
+if __name__ == '__main__':
+    import logging
+
+    class PYES(RealProtocol):
+        protocol_features = [b'YES']
+
+    class PNO(RealProtocol):
+        protocol_features = [b'NO']
+
+    class PNOTSURE(RealProtocol):
+        protocol_features = [b'NOTSURE']
+
+    class PXX(RealProtocol):
+        @classmethod
+        def protocol_detect(cls, data):
+            if len(data) < 2:
+                return cls.NOTSURE
+            if data[0] == data[1]:
+                return cls.YES
+            return cls.NO
+
+    logging.basicConfig(level='DEBUG')
+
+    VirtualProtocol.register_protocol_factory(PYES)
+    VirtualProtocol.register_protocol_factory(PNOTSURE)
+    VirtualProtocol.register_protocol_factory(PNO)
+    VirtualProtocol.register_protocol_factory(PXX)
+
+    loop = asyncio.get_event_loop()
+    host, port = '0.0.0.0', 9999
+    loop.run_until_complete(loop.create_server(VirtualProtocol, host, port))
+    logger.info('监听: %s:%d', host, port)
+    loop.run_forever()
