@@ -11,14 +11,14 @@ pu.aio
 asyncio 相关扩展和工具。
 
 pu.aio.timer
-------------
+~~~~~~~~~~~~
 
 提供一个简单的 Timer。
 
 - class Timer
 
 pu.aio.client
--------------
+~~~~~~~~~~~~~
 
 简单的 Client 类和支持重连的 ReconnectingClient
 
@@ -26,9 +26,23 @@ pu.aio.client
 - class ReconnectingClient
 
 pu.aio.virtualprotocol
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 支持动态协议识别，根据收到的数据判断连接实际采用的协议。
 
 - class VirtualProtocol
 - class RealProtocol
+
+util
+----
+
+- shorten
+
+dictutil
+--------
+
+- repr_dict
+- Dot
+- DotDict
+- OrderedDict
+- DotOrderedDict

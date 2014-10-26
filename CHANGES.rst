@@ -1,3 +1,8 @@
+0.3.0(2014-10-26)
+-----------------
+
+- dictutil -- repr_dict, Dot, DotDict, OrderedDict, DotOrderedDict
+
 0.2.0(2014-10-25)
 -----------------
 
