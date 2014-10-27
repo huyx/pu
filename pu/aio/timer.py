@@ -2,6 +2,9 @@
 import asyncio
 
 
+__all__ = ['Timer']
+
+
 class Timer:
     def __init__(self, callback=None, loop=None):
         self.callback = callback or self.timeout

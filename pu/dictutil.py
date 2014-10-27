@@ -23,11 +23,20 @@ class Dot:
     '''支持对现有的 dict, OrderedDict 添加 . 方式访问
     '''
     def __init__(self, d):
-        object.__setattr__(self, '__dotted__', d)
+        object.__setattr__(self, '__orig_dict__', d)
+
+    def __getitem__(self, key):
+        return self.__orig_dict__[key]
+
+    def __setitem__(self, key, value):
+        self.__orig_dict__[key] = value
+
+    def __delitem__(self, key):
+        del self.__orig_dict__[key]
 
     def __getattr__(self, name):
         try:
-            value = self.__dotted__[name]
+            value = self.__orig_dict__[name]
         except KeyError:
             raise AttributeError('%r has not attr %r' % (self, name))
         else:
@@ -36,11 +45,11 @@ class Dot:
             return value
 
     def __setattr__(self, name, value):
-        self.__dotted__[name] = value
+        self.__orig_dict__[name] = value
 
     def __delattr__(self, name):
         try:
-            del self.__dotted__[name]
+            del self.__orig_dict__[name]
         except KeyError:
             raise AttributeError('%r has not attr %r' % self, name)
 

@@ -42,6 +42,7 @@ class Test(unittest.TestCase):
         adict = dict(a=1, b=2)
         d = Dot(adict)
         assert d.a == 1
+        assert d['a'] == 1
         assert d.b == 2
         try:
             assert d.c
