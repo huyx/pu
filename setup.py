@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from distutils.core import setup
+from pu import version
 import os.path
 
-version = '0.3.0'
 
 classifiers = [
     "Programming Language :: Python",
