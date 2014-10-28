@@ -46,3 +46,27 @@ dictutil
 - DotDict
 - OrderedDict
 - DotOrderedDict
+
+manager
+-------
+
+- class Manager: 对象管理器
+
+
+用法::
+
+    manager = Manager()
+
+    manager.register(1, 'ONE')
+
+    @manager.register
+    def a(): pass
+
+    @manager.named('funcb', 'FUNCB')
+    def b(): pass
+
+    @manager.register
+    class A: pass
+
+    @manager.named('clsb', 'CLSB')
+    class B: pass
