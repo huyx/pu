@@ -30,6 +30,7 @@ pu.aio.virtualprotocol
 
 支持动态协议识别，根据收到的数据判断连接实际采用的协议。
 
+- class VirtualProtocolFactory
 - class VirtualProtocol
 - class RealProtocol
 

@@ -1,8 +1,8 @@
 /.project
 /.pydevproject
 /.settings
-
+/MANIFEST
+/build
 /dist
 
 *.pyc
-/MANIFEST
