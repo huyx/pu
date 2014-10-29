@@ -14,7 +14,7 @@ import yaml
 INCLUDE_TAG = '!include'
 
 
-def load(filename):
+def load(filename, encoding='utf-8'):
     dirname = os.path.dirname(filename)
 
     def include(loader, node):
@@ -30,7 +30,7 @@ def load(filename):
         else:
             nodename = None
 
-        with open(os.path.join(dirname, filename)) as f:
+        with open(os.path.join(dirname, filename), encoding=encoding) as f:
             document = yaml.load(f)
 
         if nodename:
@@ -40,7 +40,7 @@ def load(filename):
 
     Constructor.add_constructor(INCLUDE_TAG, include)
 
-    with open(filename) as f:
+    with open(filename, encoding=encoding) as f:
         data = yaml.load(f)
 
     del Constructor.yaml_constructors[INCLUDE_TAG]
