@@ -1,6 +1,11 @@
 0.4.3(2014-10-30)
 -----------------
 
+- dictutil.Dot: 添加 get 和 setdefault 方法
+
+0.4.3(2014-10-30)
+-----------------
+
 - client.Client: 修改 connect 方法为 coroutine
 - 版本: Alpha 改为 Beta
 
