@@ -8,11 +8,12 @@ class Client:
         self.protocol_factory = protocol_factory
         self.loop = loop or asyncio.get_event_loop()
 
+    @asyncio.coroutine
     def connect(self, host, port):
         self.host = host
         self.port = port
 
-        asyncio.async(self._connect())
+        yield from self._connect()
 
     @asyncio.coroutine
     def _connect(self):
@@ -55,11 +56,19 @@ class ReconnectingClient(Client):
 
 if __name__ == '__main__':
     import logging
+    import sys
+
     logging.basicConfig(level='DEBUG')
 
     loop = asyncio.get_event_loop()
 
-    client = Client(asyncio.Protocol)
-    client.connect('127.0.0.1', 9999)
+    if '-r' in sys.argv:
+        client = ReconnectingClient(asyncio.Protocol)
+    else:
+        client = Client(asyncio.Protocol)
+
+    loop.run_until_complete(client.connect('127.0.0.1', 9999))
+
+    logger.info('连接完成，可以做自己的事了.')
 
     loop.run_forever()
