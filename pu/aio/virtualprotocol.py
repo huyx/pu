@@ -2,6 +2,7 @@
 import asyncio
 import logging
 
+logging.warning('%s 已经废弃，请使用 dummyprotocol.', __name__)
 
 __all__ = ['VirtualProtocol', 'RealProtocol']
 
@@ -122,8 +123,6 @@ class RealProtocol:
 
 
 if __name__ == '__main__':
-    import logging
-
     class PYES(RealProtocol):
         protocol_features = [b'YES']
 
