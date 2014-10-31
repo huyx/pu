@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-from .log import logger
 import asyncio
+import logging
 
 
 __all__ = ['VirtualProtocol', 'RealProtocol']
+
+logger = logging.getLogger(__name__)
 
 
 class VirtualProtocol(asyncio.Protocol):

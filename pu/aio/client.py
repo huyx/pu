@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-from .log import logger
 import asyncio
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class Client:
