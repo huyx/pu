@@ -23,20 +23,29 @@ class Dot:
     '''支持对现有的 dict, OrderedDict 添加 . 方式访问
     '''
     def __init__(self, d):
-        object.__setattr__(self, 'orig_object', d)
+        object.__setattr__(self, '_d', d)
+
+    def __repr__(self):
+        return self._d.__repr__()
+
+    def __str__(self):
+        return self._d.__str__()
+
+    def __contains__(self, key):
+        return self._d.__contains__(key)
 
     def __getitem__(self, key):
-        return self.orig_object[key]
+        return self._d.__getitem__(key)
 
     def __setitem__(self, key, value):
-        self.orig_object[key] = value
+        return self._d.__setitem__(key, value)
 
     def __delitem__(self, key):
-        del self.orig_object[key]
+        return self._d.__delitem__(key)
 
     def __getattr__(self, name):
         try:
-            value = self.orig_object[name]
+            value = self._d[name]
         except KeyError:
             raise AttributeError('%r has not attr %r' % (self, name))
         else:
@@ -45,19 +54,19 @@ class Dot:
             return value
 
     def __setattr__(self, name, value):
-        self.orig_object[name] = value
+        return self._d.__setitem__(name, value)
 
     def __delattr__(self, name):
         try:
-            del self.orig_object[name]
+            del self._d[name]
         except KeyError:
             raise AttributeError('%r has not attr %r' % self, name)
-
+    
     def get(self, key, default=None):
-        return self.orig_object.get(key, default)
-
+        return self._d.get(key, default)
+    
     def setdefault(self, key, default):
-        return self.orig_object.setdefault(key, default)
+        return self._d.setdefault(key, default)
 
 
 class OrderedDict(_OrderedDict):

@@ -66,3 +66,8 @@ class Test(unittest.TestCase):
         d = Dot(adict)
         assert d.a.aa == 1
         assert d.a.ab == 2
+
+    def test_dotit_repr(self):
+        adict = dict(a=dict(aa=1, ab=2), b=2)
+        d = Dot(adict)
+        self.assertEqual(repr(adict), repr(d))
