@@ -6,6 +6,8 @@ __all__ = ['Timer']
 
 
 class Timer:
+    __timer = None
+
     def __init__(self, callback=None, loop=None):
         self.callback = callback or self.timeout
         self.loop = loop or asyncio.get_event_loop()
