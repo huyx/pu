@@ -10,6 +10,10 @@ pu.aio
 
 asyncio 相关扩展和工具。
 
+pu.aio.util
+
+- file_get_contents: 读取文件内容或下载 http 页面内容
+
 pu.aio.timer
 ~~~~~~~~~~~~
 
@@ -25,21 +29,31 @@ pu.aio.client
 - class Client
 - class ReconnectingClient
 
-pu.aio.virtualprotocol
+pu.aio.dummyprotocol
 ~~~~~~~~~~~~~~~~~~~~~~
 
 支持动态协议识别，根据收到的数据判断连接实际采用的协议。
+
+- class DummyProtocolFactory
+- class DummyProtocol
+
+pu.aio.virtualprotocol
+~~~~~~~~~~~~~~~~~~~~~~
+
+!! 请使用 dummyprotocol
+
+支持动态协议识别，根据收到的数据判断连接实际采用的协议，动态协议需要继承自 RealProtocol。
 
 - class VirtualProtocolFactory
 - class VirtualProtocol
 - class RealProtocol
 
-util
+pu.util
 ----
 
 - shorten
 
-dictutil
+pu.dictutil
 --------
 
 - repr_dict
@@ -48,7 +62,7 @@ dictutil
 - OrderedDict
 - DotOrderedDict
 
-manager
+pu.manager
 -------
 
 - class Manager: 对象管理器
