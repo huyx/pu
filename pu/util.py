@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+
 
 def shorten(s, width=80):
     '''
@@ -22,6 +24,10 @@ def shorten(s, width=80):
 
     end_pos = length - cut_length
     return s[:end_pos] + '..(%d)..' % cut_length
+
+
+def bytes_fromhex(s):
+    return bytes.fromhex(re.sub('\s', '', s))
 
 
 if __name__ == '__main__':
