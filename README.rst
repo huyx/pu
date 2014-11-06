@@ -54,7 +54,7 @@ pu.util
 - shorten
 
 pu.dictutil
---------
+-----------
 
 - repr_dict
 - Dot
@@ -63,7 +63,7 @@ pu.dictutil
 - DotOrderedDict
 
 pu.manager
--------
+----------
 
 - class Manager: 对象管理器
 
@@ -85,3 +85,35 @@ pu.manager
 
     @manager.named('clsb', 'CLSB')
     class B: pass
+
+pu.datatype
+-----------
+
+自定义数据类型
+
+- class pretty_bytes -- 支持 hex 格式
+
+示例::
+
+    pb = pretty_bytes(b'\xaa\xbb')
+    assert '{0:hex}'.format(pb) == 'aabb'
+
+pu.pcap
+-------
+
+网络抓包工具
+
+命令行用法::
+
+    python -m pu.pcap				# Windows/Linux
+    python -m pu.pcap eth1			# Linux
+    python -m pu.pcap lo			# Linux
+    python -m pu.pcap 192.168.0.100	# Windows
+
+程序中的用法::
+
+    from pu.pcap import pcap
+
+    for packet in pcap('eth1'):
+         print(packet)
+
