@@ -16,6 +16,9 @@ def file_get_contents(filename, loop=None):
 
         response = yield from aiohttp.request('GET', filename)
         content = yield from response.read()
+        if response.status != 200:
+            raise RuntimeError('读取文件内容失败: %d, %s, %r' % (
+                response.status, filename, content))
         return content
     else:
         with open(filename, 'rb') as f:
