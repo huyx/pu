@@ -101,7 +101,9 @@ pu.datatype
 pu.pcap
 -------
 
-网络抓包工具
+网络抓包工具，参考:
+
+- http://www.binarytides.com/python-packet-sniffer-code-linux/
 
 命令行用法::
 
@@ -116,4 +118,28 @@ pu.pcap
 
     for packet in pcap('eth1'):
          print(packet)
+
+pu.simplefilter
+---------------
+
+简单的过滤器，支持的语法::
+
+    <filter1> && <filter2> || <filter3> && <filter4> ...
+
+每个 filter 的格式::
+
+    <name><op><pattern>
+
+其中 op:
+
+- = -- 存在且相等
+- != -- 不存在或不等于
+- ~= -- 匹配(支持 * ?)
+- !~= -- 不匹配(支持 * ?)
+
+如果 op 加一个前缀 `#`, 表示 pattern 以 hex 字符串格式指定。
+
+示例::
+
+    sip = 192.168.0.1 && dport = 80 || dport = 8080
 
