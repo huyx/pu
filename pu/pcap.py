@@ -173,7 +173,7 @@ def parse(data):
 
         return UDP(src_ip, src_port, dst_ip, dst_port, udp_data)
     else:
-        return IP(src_ip, dst_ip, ip_data)
+        return IP(src_ip, dst_ip, proto, ip_data)
 
 
 def pcap(interface=None):
