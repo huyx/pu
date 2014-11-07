@@ -26,54 +26,58 @@ class Ethernet(Packet):
 
 
 class IP(Packet):
-    def __init__(self, src, dst, proto, data):
+    def __init__(self, sip, dip, proto, data):
         super().__init__()
 
         self.proto = proto
-        self.src = src
-        self.dst = dst
+        self.sip = sip
+        self.dip = dip
         self.data = pretty_bytes(data)
 
     def __str__(self):
-        return '{type} {proto:04x} {src} > {dst} {data:hex}'.format_map(self)
+        return '{type} {proto:04x} {sip} > {dip} {data:hex}'.format_map(self)
 
 
 class ICMP(Packet):
-    def __init__(self, src, dst, data):
+    def __init__(self, sip, dip, data):
         super().__init__()
 
-        self.src = src
-        self.dst = dst
+        self.sip = sip
+        self.dip = dip
         self.data = pretty_bytes(data)
 
     def __str__(self):
-        return '{type} {src} > {dst} {data:hex}'.format_map(self)
+        return '{type} {sip} > {dip} {data:hex}'.format_map(self)
 
 
 class TCP(Packet):
-    def __init__(self, src, dst, flags, seq_no, data):
+    def __init__(self, sip, sport, dip, dport, flags, seq_no, data):
         super().__init__()
 
-        self.src = src
-        self.dst = dst
+        self.sip = sip
+        self.sport = sport
+        self.dip = dip
+        self.dport = dport
         self.flags = flags
         self.seq_no = seq_no
         self.data = pretty_bytes(data)
 
     def __str__(self):
-        return '{type} {src} > {dst} [{flags}] {seq_no:08x} {data:hex}'.format_map(self)
+        return '{type} {sip}:{sport} > {dip}:{dport} [{flags}] {seq_no:08x} {data:hex}'.format_map(self)
 
 
 class UDP(Packet):
-    def __init__(self, src, dst, data):
+    def __init__(self, sip, sport, dip, dport, data):
         super().__init__()
 
-        self.src = src
-        self.dst = dst
+        self.sip = sip
+        self.sport = sport
+        self.dip = dip
+        self.dport = dport
         self.data = pretty_bytes(data)
 
     def __str__(self):
-        return '{type} {src} > {dst} {data:hex}'.format_map(self)
+        return '{type} {sip}:{sport} > {dip}:{dport} {data:hex}'.format_map(self)
 
 
 def create_raw_socket(interface=None):
@@ -150,18 +154,15 @@ def parse(data):
         flags = tcp_header[13]
 
         flags = ''.join((
-            flags & 0x04 and 'U' or '',
-            flags & 0x08 and 'A' or '',
-            flags & 0x10 and 'P' or '',
-            flags & 0x20 and 'R' or '',
-            flags & 0x40 and 'S' or '',
-            flags & 0x80 and 'F' or '',
+            flags & 0x20 and 'U' or '',
+            flags & 0x10 and 'A' or '',
+            flags & 0x08 and 'P' or '',
+            flags & 0x04 and 'R' or '',
+            flags & 0x02 and 'S' or '',
+            flags & 0x01 and 'F' or '',
             ))
 
-        src = '%s:%d' % (src_ip, src_port)
-        dst = '%s:%d' % (dst_ip, dst_port)
-
-        return TCP(src, dst, flags, seq_no, tcp_data)
+        return TCP(src_ip, src_port, dst_ip, dst_port, flags, seq_no, tcp_data)
 
     elif proto == 17:  # UDP
         udp_header = ip_data
@@ -170,12 +171,9 @@ def parse(data):
         src_port = int.from_bytes(udp_header[0:2], 'big')
         dst_port = int.from_bytes(udp_header[2:4], 'big')
 
-        src = '%s:%d' % (src_ip, src_port)
-        dst = '%s:%d' % (dst_ip, dst_port)
-
-        return UDP(src, dst, udp_data)
+        return UDP(src_ip, src_port, dst_ip, dst_port, udp_data)
     else:
-        return IP(src, dst, ip_data)
+        return IP(src_ip, dst_ip, ip_data)
 
 
 def pcap(interface=None):
