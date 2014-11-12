@@ -30,6 +30,13 @@ def bytes_fromhex(s):
     return bytes.fromhex(re.sub('\s', '', s))
 
 
+def iterattrs(ob):
+    '''返回对象的属性列表
+    '''
+    names = sorted(dir(ob))
+    return iter((n, getattr(ob, n)) for n in names if not n.startswith('__'))
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()

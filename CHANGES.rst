@@ -1,3 +1,8 @@
+0.6.4(2014-11-12)
+-----------------
+
+- pu.util.iterattrs -- 返回指定对象的属性列表
+
 0.6.3(2014-11-07)
 -----------------
 
@@ -12,14 +17,14 @@
 0.6.1(2014-11-07)
 -----------------
 
-- BUGFIX: pu.pcap TCP flags 分析错误 
+- BUGFIX: pu.pcap TCP flags 分析错误
 - 添加 pu.simplefilter -- 简单过滤器
 - 添加 example\pcap.py
 
 0.6.0(2014-11-06)
 -----------------
 
-- 添加 class pu.datatype.pretty_bytes 
+- 添加 class pu.datatype.pretty_bytes
 - pu.pcap: 网络抓包工具
 
 0.5.5(2014-11-01)

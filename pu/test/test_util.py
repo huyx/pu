@@ -20,6 +20,14 @@ class Test(unittest.TestCase):
         self.assertRaises(ValueError, functools.partial(bytes.fromhex, s))
         self.assertEqual(util.bytes_fromhex(s), b'\xaa\xbb\xcc\xdd\xee')
 
+    def test_iterattrs(self):
+        class C(object):
+            a = 1
+        o = C()
+        o.b = 2
+        attrs = tuple(util.iterattrs(o))
+        self.assertEqual(attrs, (('a', 1), ('b', 2)))
+
 
 if __name__ == "__main__":
     unittest.main()
