@@ -61,7 +61,7 @@ class Dot:
             del self._d[name]
         except KeyError:
             raise AttributeError('%r has not attr %r' % self, name)
-    
+
     def get(self, key, default=None):
         return self._d.get(key, default)
     
@@ -97,7 +97,8 @@ class DotDict(dict):
 class DotOrderedDict(OrderedDict):
     def __getattr__(self, name):
         if name.startswith('_OrderedDict'):
-            raise AttributeError('%r has not attr %r' % (self, name))
+            raise AttributeError('%s has not attr %r' % (
+                self.__class__.__name__, name))
         try:
             return self[name]
         except KeyError:
