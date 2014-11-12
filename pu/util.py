@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from collections import Mapping
 import re
 
 
@@ -30,11 +31,59 @@ def bytes_fromhex(s):
     return bytes.fromhex(re.sub('\s', '', s))
 
 
-def iterattrs(ob):
+def iterattrs(ob, protect_member=False):
     '''返回对象的属性列表
     '''
-    names = sorted(dir(ob))
-    return iter((n, getattr(ob, n)) for n in names if not n.startswith('__'))
+    if protect_member:
+        names = (n for n in sorted(dir(ob)) if not n.startswith('__'))
+    else:
+        names = (n for n in sorted(dir(ob)) if not n.startswith('_'))
+
+    return iter((n, getattr(ob, n)) for n in names)
+
+
+def deep_encode(ob, encoding='utf_8', errors='strict'):
+    '''深入数据结构内部，尽可能把字符串编码
+    '''
+    if isinstance(ob, bytes):
+        return ob
+    elif isinstance(ob, str):
+        return ob.encode(encoding, errors)
+    elif isinstance(ob, tuple):
+        return tuple(deep_encode(x, encoding, errors) for x in ob)
+    elif isinstance(ob, list):
+        return [deep_encode(x, encoding, errors) for x in ob]
+    elif isinstance(ob, Mapping):
+        new = ob.__class__()
+        for key, value in ob.items():
+            key = deep_encode(key, encoding, errors)
+            value = deep_encode(value, encoding, errors)
+            new[key] = value
+        return new
+    else:
+        return ob
+
+
+def deep_decode(ob, encoding='utf_8', errors='strict'):
+    '''深入数据结构内部，尽可能把 bytes 解码
+    '''
+    if isinstance(ob, bytes):
+        return ob.decode(encoding, errors)
+    elif isinstance(ob, str):
+        return ob
+    elif isinstance(ob, tuple):
+        return tuple(deep_decode(x, encoding, errors) for x in ob)
+    elif isinstance(ob, list):
+        return [deep_decode(x, encoding, errors) for x in ob]
+    elif isinstance(ob, Mapping):
+        new = ob.__class__()
+        for key, value in ob.items():
+            key = deep_decode(key, encoding, errors)
+            value = deep_decode(value, encoding, errors)
+            new[key] = value
+        return new
+    else:
+        return ob
 
 
 if __name__ == '__main__':
