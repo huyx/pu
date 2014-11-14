@@ -30,7 +30,7 @@ pu.aio.client
 - class ReconnectingClient
 
 pu.aio.dummyprotocol
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 支持动态协议识别，根据收到的数据判断连接实际采用的协议。
 
@@ -49,7 +49,7 @@ pu.aio.virtualprotocol
 - class RealProtocol
 
 pu.util
-----
+-------
 
 - shorten
 
@@ -86,6 +86,8 @@ pu.manager
     @manager.named('clsb', 'CLSB')
     class B: pass
 
+    assert manager.get(1) == 'ONE'
+
 pu.datatype
 -----------
 
@@ -118,6 +120,11 @@ pu.pcap
 
     for packet in pcap('eth1'):
          print(packet)
+
+pu.rcp
+------
+
+简单的远程调用协议，文档直接看源代码里面的注释。
 
 pu.simplefilter
 ---------------
