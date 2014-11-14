@@ -1,7 +1,12 @@
+0.7.0(2014-11-14)
+-----------------
+
+- 添加 pu.rcp -- 一个简单远程调用协议(Remote Call Protocol)
+
 0.6.7(2014-11-12)
 -----------------
 
-BUGFIX: pu.dictutil.DotOrderedDict 继承类中自定义 __repr__ 引起错误（因为内部异常处理中引用了 %r）
+- BUGFIX: pu.dictutil.DotOrderedDict 继承类中自定义 __repr__ 引起错误（因为内部异常处理中引用了 %r）
 
 0.6.6(2014-11-12)
 -----------------
