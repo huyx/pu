@@ -150,3 +150,30 @@ pu.simplefilter
 
     sip = 192.168.0.1 && dport = 80 || dport = 8080
 
+pu.minimist
+-----------
+
+分析命令行参数，源自 `minimist <https://github.com/substack/minimist>`_，目的是
+提供一个简单，有一定通用性的命令行参数分析工具。
+
+
+只提供一个函数接口::
+
+    parse(args, *, lists=[], bools=[], strings=[], defaults={})
+
+示例::
+
+    $ python -m pu.minimist -x 3 -y 4 -n5 -abc --beep=boop foo bar baz
+    Namespace(_=['foo', 'bar', 'baz'], a=True, b=True, beep='boop', c=True, n=5, x=3, y=4)
+  
+    $ python -m pu.minimist -a -b -cd
+    Namespace(_=[], a=True, b=True, c=True, d=True)
+  
+    $ python -m pu.minimist -a a -a b
+    Namespace(_=[], a=['a', 'b'])
+  
+    $ python -m pu.minimist -a=a -b=b
+    Namespace(_=[], a='a', b='b')
+  
+    $ python -m pu.minimist a -- -b -c d
+    Namespace(--=['-b', '-c', 'd'], _=['a'])
