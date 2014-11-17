@@ -48,6 +48,11 @@ pu.aio.virtualprotocol
 - class VirtualProtocol
 - class RealProtocol
 
+pu.aio.protocols
+~~~~~~~~~~~~~~~~
+
+class LineReceiver 类似于 twisted.protocols.basic.LineOnlyReceiver，但支持自动检测行分隔符。
+
 pu.util
 -------
 
