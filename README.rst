@@ -168,17 +168,25 @@ pu.minimist
 
 示例::
 
+    # 综合示例
     $ python -m pu.minimist -x 3 -y 4 -n5 -abc --beep=boop foo bar baz
     Namespace(_=['foo', 'bar', 'baz'], a=True, b=True, beep='boop', c=True, n=5, x=3, y=4)
   
-    $ python -m pu.minimist -a -b -cd
-    Namespace(_=[], a=True, b=True, c=True, d=True)
-  
+    $ python -m pu.minimist -a=a -b=b
+    Namespace(_=[], a='a', b='b')
+
+    # 参数数组
     $ python -m pu.minimist -a a -a b
     Namespace(_=[], a=['a', 'b'])
   
-    $ python -m pu.minimist -a=a -b=b
-    Namespace(_=[], a='a', b='b')
-  
+    # '--' 后面的参数全部保存到 '--'
     $ python -m pu.minimist a -- -b -c d
     Namespace(--=['-b', '-c', 'd'], _=['a'])
+
+    # '-' 后面多个选项，则全部为 bool 类型
+    $ python -m pu.minimist -a -b -cd
+    Namespace(_=[], a=True, b=True, c=True, d=True)
+
+    # 用 '.' 结尾表示 bool 类型
+    $ python -m pu.minimist --arg. x -a. y
+    Namespace(_=['x', 'y'], a=True, arg=True)

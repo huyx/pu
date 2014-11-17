@@ -27,9 +27,11 @@ patterns = (
     ('--arg=value', re.compile(r'^--(.*)=(.*)$')),
     ('-a=value', re.compile(r'^-(.*)=(.*)$')),
     ('--noarg', re.compile(r'^--no(.*)$')),
-    ('--arg', re.compile(r'^--(.*)$')),  # --arg value | --arg
-    ('-aNN', re.compile(r'^-(.)([0-9]+)$')),  # -a88
+    ('--arg.', re.compile(r'^--[^.]*\.$')),  # --arg.
+    ('-a.', re.compile(r'^-.\.$')),  # -a.
+    ('--arg', re.compile(r'^--[^.]*$')),  # --arg value | --arg
     ('-a', re.compile(r'^-.$')),  # -a value | -a
+    ('-aNN', re.compile(r'^-(.)([0-9]+)$')),  # -a88
     ('-abc', re.compile(r'^-(.*)$')),  # -a -b -c
     )
 
@@ -101,6 +103,9 @@ def parse(args, *, lists=[], bools=[], strings=[], defaults={}):
                             set_arg(name, True)
                     else:
                         set_arg(name, True)
+                elif cond in ('--arg.', '-a.'):
+                    name = name[:-1]  # 去掉末尾的 .
+                    set_arg(name, True)
                 elif cond == '-aNN':
                     name, value = m.groups()
                     set_arg(name, int(value))

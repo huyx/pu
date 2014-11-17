@@ -40,6 +40,11 @@ class Test(unittest.TestCase):
             minimist.parse('--pi 3.14 -r 10', strings=['pi', 'r']),
             _(_=[], pi='3.14', r='10'))
 
+    def test_bool_arg(self):
+        self.assertEqual(
+            minimist.parse('--arg. -a.'),
+            _(_=[], arg=True, a=True))
+
     def test_more_value_1(self):
         self.assertEqual(
             minimist.parse('-a 1,2,3 -b 3e4'),
