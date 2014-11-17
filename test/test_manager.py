@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
-from ..manager import Manager
+
+from pu.manager import Manager
 
 
 class Test(unittest.TestCase):

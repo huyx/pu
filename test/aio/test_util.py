@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from pu.aio.util import file_get_contents
 import asyncio
 import os.path
 import unittest
+
+from pu.aio.util import file_get_contents
 
 
 def setUpModule():

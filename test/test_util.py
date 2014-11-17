@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from .. import util
-import unittest
 import functools
+import unittest
+
+from pu import util
 
 
 class Test(unittest.TestCase):
