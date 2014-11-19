@@ -6,9 +6,6 @@ class LineReceiver(asyncio.Protocol):
     _buffer = b''
     _delimiter = None
 
-    def connection_made(self, transport):
-        self.transport = transport
-
     def _guess_delimiter(self):
         if b'\r\n' in self._buffer:
             self._delimiter = b'\r\n'
@@ -16,6 +13,13 @@ class LineReceiver(asyncio.Protocol):
             self._delimiter = b'\n'
         elif b'\r' in self._buffer:
             self._delimiter = b'\r'
+
+    def connection_made(self, transport):
+        self.transport = transport
+
+    def write_line(self, line):
+        data = line + self._delimiter or b'\r\n'
+        self.transport.write(data)
 
     def data_received(self, data):
         self._buffer += data
@@ -32,4 +36,3 @@ class LineReceiver(asyncio.Protocol):
 
     def line_received(self, line):
         raise NotImplementedError
-
