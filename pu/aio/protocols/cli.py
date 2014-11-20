@@ -88,6 +88,8 @@ class Cli(LineReceiver):
                     handler(*args, **kwargs)
                 except Error as e:
                     self.write_line(':E%d: %s' % (e.code, e.message))
+                except Exception as e:
+                    self.write_line(':E999: %s' % (e))
 
         self.write(self.prompt)
 
