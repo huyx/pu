@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from argparse import Namespace
 from ast import literal_eval
 import re
 import shlex
@@ -43,29 +42,29 @@ def parse(args, *, lists=[], bools=[], strings=[], defaults={}):
         args = shlex.split(args, comments=True)
 
     # 准备结果
-    result = Namespace()
+    result = {}
 
-    result._ = []
+    result['_'] = []
 
     # 列表选项处理
     for name in lists:
-        setattr(result, name, [])
+        result[name] = []
 
     # 定义设定选项的函数
     def set_arg(name, value, is_string=False):
         if not is_string and isinstance(value, str):
             value = guess(value)
 
-        orig_value = getattr(result, name, None)
+        orig_value = result.get(name, None)
 
         if orig_value is not None:
             # 多个值自动转换成列表
             if isinstance(orig_value, list):
                 orig_value.append(value)
             else:
-                setattr(result, name, [orig_value, value])
+                result[name] = [orig_value, value]
         else:
-            setattr(result, name, value)
+            result[name] = value
 
     while args:
         arg = args.pop(0)
@@ -118,9 +117,8 @@ def parse(args, *, lists=[], bools=[], strings=[], defaults={}):
 
     # 缺省值处理
     for name, value in defaults.items():
-        notfound = object()
-        if getattr(result, name, notfound) is notfound:
-            setattr(result, name, value)
+        if name not in result:
+            result[name] = value
 
     return result
 
