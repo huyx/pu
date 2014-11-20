@@ -3,8 +3,7 @@ import asyncio
 import textwrap
 
 from pu import minimist
-
-from .basic import LineReceiver
+from pu.aio.protocols.basic import LineReceiver
 
 
 class Error(Exception):
@@ -47,11 +46,22 @@ class Cli(LineReceiver):
 
     def write_line(self, line):
         if not self.password:
-            super().write_line(line.encode(self.encoding))
+            if isinstance(line, str):
+                line = line.encode(self.encoding)
+            super().write_line(line)
 
     def write(self, data):
         if not self.password:
             self.transport.write(data)
+
+    def write_message(self, message):
+        if not self.password:
+            delimiter = self._delimiter
+            if isinstance(message, str):
+                delimiter = delimiter.decode()
+            lines = message.split(delimiter)
+            for line in lines:
+                self.write_line('  ' + line)
 
     def line_received(self, line):
         try:
@@ -62,10 +72,9 @@ class Cli(LineReceiver):
         if not line:
             return
 
-        args = minimist.parse(line)
-        self.args = args
+        kwargs = minimist.parse(line)
 
-        command = args._.pop(0)
+        command, *args = kwargs.pop('_')
 
         handler_name = command.upper()
 
@@ -76,7 +85,7 @@ class Cli(LineReceiver):
         else:
             if not self.password or handler.__name__ == 'AUTH':
                 try:
-                    handler(args)
+                    handler(*args, **kwargs)
                 except Error as e:
                     self.write_line(':E%d: %s' % (e.code, e.message))
 
@@ -95,32 +104,28 @@ class Cli(LineReceiver):
 
         return handler
 
-    def AUTH(self, args):
-        if args._:
-            if self.password == args._[0]:
-                self.password = None
-        else:
-            raise InvalidParam()
+    def AUTH(self, password):
+        if self.password == password:
+            self.password = None
 
-    def HELP(self, args):
+    def HELP(self, *commands):
         '''查看帮助信息
         '''
-        commands = args._
-
         if commands:
             prefix = ' ' * 20
             for command in commands:
                 f = getattr(self, command.upper(), None)
                 if f:
+                    delimiter = self._delimiter.decode()
                     # 重新格式化名称文档
-                    doc = self._delimiter.decode().join(
-                        l.strip() for l in f.__doc__.splitlines())
+                    doc = f.__doc__ or '-'
+                    doc = delimiter.join(l.strip() for l in doc.splitlines())
                     doc = textwrap.indent(doc, prefix)
 
                     help_text = '%-20s' % command + doc[20:].rstrip()
                 else:
                     help_text = '%-20s不存在' % command
-                self.write_line(help_text)
+                self.write_message(help_text)
         else:
             commands = [m for m in dir(self) if m.upper() == m]
             for command in commands:
@@ -128,29 +133,31 @@ class Cli(LineReceiver):
                 doc = f.__doc__ or '-'
                 doc = doc.splitlines()[0]
                 help_text = '%-20s%s' % (command, doc)
-                self.write_line(help_text)
+                self.write_message(help_text)
 
     def set_encoding(self, encoding):
         try:
             assert '测试'.encode(encoding).decode(encoding) == '测试'
         except:
-            raise InvalidParam('无效编码类型 %' % encoding)
+            raise InvalidParam('无效编码类型 %s' % encoding)
         else:
             self.encoding = encoding
 
-    def ENCODING(self, args):
+    def ENCODING(self, encoding=None):
         '''设置编码
         命令格式: encoding [gbk|utf-8|...]
         '''
-        if args._:
-            self.set_encoding(args._[0])
-        self.write_line('当前编码: %s' % self.encoding)
+        if encoding:
+            if self.encoding != encoding:
+                self.set_encoding(encoding)
+        else:
+            self.write_message('编码: %s' % self.encoding)
 
-    def GBK(self, args):
-        self.set_encoding('gbk')
+    def GBK(self):
+        self.ENCODING('gbk')
 
-    def UTF8(self, args):
-        self.set_encoding('utf_8')
+    def UTF8(self):
+        self.ENCODING('utf_8')
 
 
 if __name__ == '__main__':
