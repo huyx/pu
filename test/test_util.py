@@ -21,6 +21,9 @@ class Test(unittest.TestCase):
         self.assertRaises(ValueError, functools.partial(bytes.fromhex, s))
         self.assertEqual(util.bytes_fromhex(s), b'\xaa\xbb\xcc\xdd\xee')
 
+    def test_format_time(self):
+        self.assertEqual(util.format_time(1416469808), '2014-11-20 15:50:08')
+
 
 class IterattrsTest(unittest.TestCase):
     class C(object):

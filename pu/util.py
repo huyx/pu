@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import Mapping
 import re
+import time
 
 
 def shorten(s, width=80):
@@ -92,6 +93,10 @@ def format_args(args, kwargs):
         kwargs = sorted(kwargs.items())
     items.extend(map(lambda kv: '%s=%r' % kv, kwargs))
     return ', '.join(items)
+
+
+def format_time(t=None, fmt='%Y-%m-%d %H:%M:%S'):
+    return time.strftime(fmt, time.localtime(t))
 
 
 if __name__ == '__main__':
