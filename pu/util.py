@@ -86,6 +86,14 @@ def deep_decode(ob, encoding='utf_8', errors='strict'):
         return ob
 
 
+def format_args(args, kwargs):
+    items = list(map(repr, args))
+    if isinstance(kwargs, dict):
+        kwargs = sorted(kwargs.items())
+    items.extend(map(lambda kv: '%s=%r' % kv, kwargs))
+    return ', '.join(items)
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
