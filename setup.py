@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from distutils.core import setup
-from pu import version
 import os.path
+import sys
+
+from pu import version
 
 
 classifiers = [
@@ -18,7 +20,11 @@ classifiers = [
 
 def read(fname):
     fname = os.path.join(os.path.dirname(__file__), fname)
-    return open(fname, encoding='utf-8').read().strip()
+    if sys.version > '3.0':
+        content = open(fname, encoding='utf-8').read()
+    else:
+        content = open(fname).read().decode('utf-8')
+    return content.strip()
 
 def read_files(*fnames):
     return '\r\n\r\n\r\n'.join(map(read, fnames))
