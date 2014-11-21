@@ -3,7 +3,7 @@ from distutils.core import setup
 import os.path
 import sys
 
-from pu import version
+import pu
 
 
 classifiers = [
@@ -31,7 +31,7 @@ def read_files(*fnames):
 
 setup(
     name = 'pu',
-    version = version,
+    version=pu.version,
     packages = [
         'pu',
         'pu.aio',

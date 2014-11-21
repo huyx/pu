@@ -1,2 +1,7 @@
 # -*- coding: utf-8 -*-
-from .version import version
+import logging
+
+from ._version import version
+
+
+logger = logging.getLogger(__name__)
