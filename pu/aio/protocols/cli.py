@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import asyncio
+import logging
 import textwrap
 
 from pu import minimist
 from pu.aio.protocols.basic import LineReceiver
+
+
+logger = logging.getLogger(__name__)
 
 
 class Error(Exception):
@@ -39,7 +43,6 @@ class InvalidParam(Error):
 
 class Cli(LineReceiver):
     encoding = 'utf_8'
-    prompt = b'> '
 
     def __init__(self, password=None):
         self.password = password
@@ -54,14 +57,26 @@ class Cli(LineReceiver):
         if not self.password:
             self.transport.write(data)
 
-    def write_message(self, message):
-        if not self.password:
-            delimiter = self._delimiter
-            if isinstance(message, str):
-                delimiter = delimiter.decode()
-            lines = message.split(delimiter)
-            for line in lines:
-                self.write_line('  ' + line)
+    def _write_lines(self, lines, prefix='M'):
+        if self.password:
+            return
+        if isinstance(lines, str):
+            lines = [lines]
+        self.write_line(prefix + ' ' + lines.pop(0))
+        for line in lines:
+            self.write_line('  ' + line)
+
+    def write_error(self, message):
+        self._write_lines(message, 'E')
+
+    def write_response(self, message):
+        self._write_lines(message, '-')
+
+    def write_notify(self, message):
+        self._write_lines(message, 'N')
+
+    def splitlines(self, s):
+        return s.split(self._delimiter.decode())
 
     def line_received(self, line):
         try:
@@ -81,17 +96,16 @@ class Cli(LineReceiver):
         try:
             handler = self.get_handler(handler_name)
         except Error as e:
-            self.write_line(':E%d: %s' % (e.code, e.message))
+            self.write_error('%d: %s' % (e.code, e.message))
         else:
             if not self.password or handler.__name__ == 'AUTH':
                 try:
                     handler(*args, **kwargs)
                 except Error as e:
-                    self.write_line(':E%d: %s' % (e.code, e.message))
+                    self.write_error('%d: %s' % (e.code, e.message))
                 except Exception as e:
-                    self.write_line(':E999: %s' % (e))
-
-        self.write(self.prompt)
+                    logger.exception('处理 %s 出错: %s', handler.__name__, e)
+                    self.write_error('999: %s' % (e))
 
     def get_handler(self, handler_name):
         handler = getattr(self, handler_name, None)
@@ -113,29 +127,34 @@ class Cli(LineReceiver):
     def HELP(self, *commands):
         '''查看帮助信息
         '''
+        docs = []
         if commands:
-            prefix = ' ' * 20
             for command in commands:
-                f = getattr(self, command.upper(), None)
-                if f:
-                    delimiter = self._delimiter.decode()
-                    # 重新格式化名称文档
-                    doc = f.__doc__ or '-'
-                    doc = delimiter.join(l.strip() for l in doc.splitlines())
-                    doc = textwrap.indent(doc, prefix)
+                handler = getattr(self, command.upper(), None)
+                if handler:
+                    # 重新格式化文档
+                    doc = handler.__doc__ or '-'
+                    lines = doc.splitlines()
 
-                    help_text = '%-20s' % command + doc[20:].rstrip()
+                    docs.append('%-20s%s' % (command, lines.pop(0)))
+
+                    # 处理后续行的缩进问题
+                    lines = textwrap.dedent('\n'.join(lines)).splitlines()
+
+                    for line in lines:
+                        docs.append('%-20s%s' % (' ', line))
                 else:
-                    help_text = '%-20s不存在' % command
-                self.write_message(help_text)
+                    docs.append('%-20s不存在' % command)
         else:
             commands = [m for m in dir(self) if m.upper() == m]
             for command in commands:
-                f = getattr(self, command.upper(), None)
-                doc = f.__doc__ or '-'
+                handler = getattr(self, command.upper(), None)
+                doc = handler.__doc__ or '-'
                 doc = doc.splitlines()[0]
-                help_text = '%-20s%s' % (command, doc)
-                self.write_message(help_text)
+                doc = '%-20s%s' % (command, doc)
+                docs.append(doc)
+
+        self.write_response(docs)
 
     def set_encoding(self, encoding):
         try:
@@ -153,7 +172,7 @@ class Cli(LineReceiver):
             if self.encoding != encoding:
                 self.set_encoding(encoding)
         else:
-            self.write_message('编码: %s' % self.encoding)
+            self.write_response('encoding: %s' % self.encoding)
 
     def GBK(self):
         self.ENCODING('gbk')
