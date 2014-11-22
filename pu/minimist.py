@@ -35,11 +35,11 @@ patterns = (
     )
 
 
-def parse(args, *, lists=[], bools=[], strings=[], defaults={}):
+def parse(args, *, lists=[], bools=[], strings=[], defaults={}, comments=True):
     '''分析命令行参数
     '''
     if isinstance(args, str):
-        args = shlex.split(args, comments=True)
+        args = shlex.split(args, comments=comments)
 
     # 准备结果
     result = {}
