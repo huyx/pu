@@ -99,6 +99,58 @@ def format_time(t=None, fmt='%Y-%m-%d %H:%M:%S'):
     return time.strftime(fmt, time.localtime(t))
 
 
+def get_field(o, field_name):
+    '''支持多级对象的读取
+
+    语法: .attr:index#index ...
+
+    - .attr
+    - :index     [index]
+    - #index     [int(index)]
+    '''
+    # 开头的 . 可以省略
+    if field_name[0] not in '.:#':
+        field_name = '.' + field_name
+
+    names = re.findall(r'[.:#]\w+', field_name)
+    for name in names:
+        flag = name[0]
+        name = name[1:]
+        if flag == '.':
+            o = getattr(o, name)
+        elif flag == ':':
+            o = o[name]
+        else:
+            o = o[int(name)]
+
+    return o
+
+
+def set_field(o, field_name, value):
+    # 开头的 . 可以省略
+    if field_name[0] not in '.:#':
+        field_name = '.' + field_name
+
+    * names, last_name = re.findall(r'[.:#]\w+', field_name)
+    for name in names:
+        flag = name[0]
+        name = name[1:]
+        if flag == '.':
+            o = getattr(o, name)
+        elif flag == ':':
+            o = o[name]
+        else:
+            o = o[int(name)]
+
+    flag, name = last_name[0], last_name[1:]
+    if flag == '.':
+        setattr(o, name, value)
+    elif flag == ':':
+        o[name] = value
+    else:
+        o[int(name)] = value
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()

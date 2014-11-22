@@ -55,5 +55,25 @@ class CodecTest(unittest.TestCase):
         self.assertEqual(util.deep_decode(self.binary), self.string)
 
 
+class GetSetFieldTest(unittest.TestCase):
+    def setUp(self):
+        class O: pass
+        self.o = O()
+        self.o.d = {}
+        self.o.d['o'] = O()
+        self.o.d['o'].l = [0, 1]
+        self.o.a = 'a'
+
+    def test_get_field(self):
+        self.assertEqual(util.get_field(self.o, '.a'), 'a')
+        self.assertEqual(util.get_field(self.o, '.d:o.l#1'), 1)
+
+    def test_set_field(self):
+        util.set_field(self.o, '.a', 'A')
+        self.assertEqual(util.get_field(self.o, '.a'), 'A')
+        util.set_field(self.o, '.d:o.l#1', 'hello')
+        self.assertEqual(util.get_field(self.o, '.d:o.l#1'), 'hello')
+
+
 if __name__ == "__main__":
     unittest.main()
