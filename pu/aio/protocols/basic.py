@@ -3,8 +3,13 @@ import asyncio
 
 
 class LineReceiver(asyncio.Protocol):
+    '''每次接收一行，支持自动探测行结束符，支持暂停处理
+
+    由于有些数据已经接收到缓冲区内，因此需要 _paused 标志协助处理
+    '''
     _buffer = b''
     _delimiter = None
+    _paused = False
 
     def _guess_delimiter(self):
         if b'\r\n' in self._buffer:
@@ -29,10 +34,25 @@ class LineReceiver(asyncio.Protocol):
             if not self._delimiter:
                 return
 
-        lines = self._buffer.split(self._delimiter)
-        self._buffer = lines.pop(-1)
-        for line in lines:
+        while self._buffer and not self._paused:
+            try:
+                line, self._buffer = self._buffer.split(self._delimiter, 1)
+            except:
+                break
             self.line_received(line)
+
+    def pause_reading(self):
+        '''暂停读取和处理已经读取的数据
+        '''
+        self._paused = True
+        self.transport.pause_reading()
+
+    def resume_reading(self):
+        '''恢复处理
+        '''
+        self._paused = False
+        self.transport.resume_reading()
+        self.data_received(b'')
 
     def line_received(self, line):
         raise NotImplementedError
