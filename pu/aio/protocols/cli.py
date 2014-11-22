@@ -87,7 +87,10 @@ class Cli(LineReceiver):
         if not line:
             return
 
-        kwargs = minimist.parse(line)
+        if line.startswith('#'):
+            return
+
+        kwargs = minimist.parse(line, comments=False)
 
         command, *args = kwargs.pop('_')
 
