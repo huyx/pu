@@ -1,3 +1,8 @@
+0.10.10(2014-11-26)
+-------------------
+
+- 增加 Int8StringReceiver, Int16StringReceiver, Int32StringReceiver
+
 0.10.9(2014-11-22)
 ------------------
 
