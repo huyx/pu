@@ -36,6 +36,7 @@ setup(
         'pu',
         'pu.aio',
         'pu.aio.protocols',
+        'pu.pattern',
         ],
     description = 'Python utils',
     long_description = read_files('README.rst', 'CHANGES.rst'),
