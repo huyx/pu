@@ -39,7 +39,8 @@ class LineReceiver(asyncio.Protocol, _PauseableMixin):
         self.transport = transport
 
     def write_line(self, line):
-        data = line + self._delimiter or b'\r\n'
+        delimiter = self._delimiter or b'\r\n'
+        data = line + delimiter
         self.transport.write(data)
 
     def data_received(self, data):
