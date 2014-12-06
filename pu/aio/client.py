@@ -58,7 +58,6 @@ class ReconnectingClient(Client):
 
 
 if __name__ == '__main__':
-    import logging
     import sys
 
     logging.basicConfig(level='DEBUG')

@@ -192,3 +192,11 @@ pu.minimist
     # 用 '.' 结尾表示 bool 类型
     $ python -m pu.minimist --arg. x -a. y
     Namespace(_=['x', 'y'], a=True, arg=True)
+
+pu.pattern
+----------
+
+设计模式收集
+
+- pu.pattern.observer -- 观察者模式，根据 Python 的特点，只提供了 Observerable，可以注册函数或方法观察者。
+
