@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-class Observerable:
+class Observable:
     '''观察者模式
+
+    为了，简化接口，约定观察者为函数。
 
     用法:
 
-    observerable = Observerable()
-
-    observerable.add_observer(print)
-
-    observerable.notify_observers('hello')
+        observable = Observable()
+        observable.add_observer(print)
+        observable.notify_observers('hello')
     '''
     _observers = None
 
@@ -40,3 +40,7 @@ class Observerable:
         '''
         for observer in self._observers:
             observer(*args, **kwargs)
+
+
+# Observerable 是拼写错误，为了兼容原来的程序，保留这个名称
+Observerable = Observable
