@@ -127,6 +127,8 @@ def get_field(o, field_name):
 
 
 def set_field(o, field_name, value):
+    '''多级对象属性的修改
+    '''
     # 开头的 . 可以省略
     if field_name[0] not in '.:#':
         field_name = '.' + field_name
@@ -149,6 +151,23 @@ def set_field(o, field_name, value):
         o[name] = value
     else:
         o[int(name)] = value
+
+
+def to_bool(value):
+    orig_value = value
+    value = orig_value.strip().lower()
+
+    if value in ['y', 'yes', 't', 'true', '1']:
+        return True
+    elif value in ['n', 'no', 'f', 'false', '0']:
+        return False
+    else:
+        raise ValueError('%r 不能转换成布尔类型' % orig_value)
+
+
+def to_hex(value: bytes, delimiter=' ', lower=True):
+    fmt = '%02x' if lower else '%02X'
+    return delimiter.join(fmt % b for b in value)
 
 
 if __name__ == '__main__':
