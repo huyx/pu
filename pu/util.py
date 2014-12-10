@@ -154,21 +154,36 @@ def set_field(o, field_name, value):
 
 
 def to_bool(value):
-    orig_value = value
-    value = orig_value.strip().lower()
+    if isinstance(value, bool):
+        return value
+    elif isinstance(value, str):
+        orig_value = value
+        value = orig_value.strip().lower()
 
-    if value in ['y', 'yes', 't', 'true', '1']:
-        return True
-    elif value in ['n', 'no', 'f', 'false', '0']:
-        return False
+        if value in ['y', 'yes', 't', 'true', '1']:
+            return True
+        elif value in ['n', 'no', 'f', 'false', '0']:
+            return False
+        else:
+            raise ValueError('%r 不能转换成布尔类型' % orig_value)
     else:
-        raise ValueError('%r 不能转换成布尔类型' % orig_value)
+        return bool(value)
 
 
 def to_hex(value: bytes, delimiter=' ', lower=True):
     fmt = '%02x' if lower else '%02X'
     return delimiter.join(fmt % b for b in value)
 
+
+def parse_hostport(hostport, default_host='127.0.0.1'):
+    if ':' in hostport:
+        host, port = hostport.split(':')
+    else:
+        host = default_host
+        port = hostport
+    port = int(port)
+
+    return host, port
 
 if __name__ == '__main__':
     import doctest

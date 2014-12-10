@@ -1,8 +1,13 @@
+0.11.1(2014-12-10)
+------------------
+
+- pu.util 增加: parse_hostport
+
 0.11.1(2014-12-9)
 -----------------
 
 - 修正拼写错误: Observerable ==> Observable
-- 增加 to_bool，to_hex
+- pu.util 增加: to_bool，to_hex
 
 0.11.0(2014-11-29)
 ------------------
