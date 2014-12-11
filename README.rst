@@ -69,6 +69,11 @@ pu.dictutil
 - OrderedDict
 - DotOrderedDict
 
+pu.urlparse
+-----------
+
+- urlparse: 提供更灵活地 url 分析
+
 pu.manager
 ----------
 
