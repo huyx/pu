@@ -69,10 +69,12 @@ pu.dictutil
 - OrderedDict
 - DotOrderedDict
 
-pu.urlparse
------------
+pu.url
+------
 
-- urlparse: 提供更灵活地 url 分析
+- parse_url: 提供更灵活地 url 分析
+- parse_hostport
+- Netloc
 
 pu.manager
 ----------

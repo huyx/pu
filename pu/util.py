@@ -175,16 +175,6 @@ def to_hex(value: bytes, delimiter=' ', lower=True):
     return delimiter.join(fmt % b for b in value)
 
 
-def parse_hostport(hostport, default_host='127.0.0.1'):
-    if ':' in hostport:
-        host, port = hostport.split(':')
-    else:
-        host = default_host
-        port = hostport
-    port = int(port)
-
-    return host, port
-
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
