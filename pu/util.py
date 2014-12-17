@@ -2,6 +2,7 @@
 from collections import Mapping
 import re
 import time
+import importlib
 
 
 def shorten(s, width=80):
@@ -173,6 +174,13 @@ def to_bool(value):
 def to_hex(value: bytes, delimiter=' ', lower=True):
     fmt = '%02x' if lower else '%02X'
     return delimiter.join(fmt % b for b in value)
+
+
+def import_file(module_name, filepath):
+    import importlib.machinery
+
+    loader = importlib.machinery.SourceFileLoader(module_name, filepath)
+    return loader.load_module()
 
 
 if __name__ == '__main__':
