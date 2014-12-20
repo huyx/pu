@@ -2,7 +2,6 @@
 from collections import Mapping
 import re
 import time
-import importlib
 
 
 def shorten(s, width=80):
