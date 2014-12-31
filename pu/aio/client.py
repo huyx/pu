@@ -34,7 +34,9 @@ class ReconnectingClient(Client):
         self.retry_delay = retry_delay
 
     @asyncio.coroutine
-    def _connect(self):
+    def _connect(self, delay=0):
+        yield from asyncio.sleep(delay)
+
         while True:
             try:
                 # create_connection 返回 transport, protocol
@@ -52,7 +54,7 @@ class ReconnectingClient(Client):
         def connection_lost(exc):
             logger.info('连接断开，重新连接: %s', exc)
             old_connection_lost(exc)
-            asyncio.async(self._connect())
+            asyncio.async(self._connect(self.retry_delay))
 
         protocol.connection_lost = connection_lost
 
