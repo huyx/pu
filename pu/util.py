@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from collections import Mapping
+import importlib
+import inspect
 import re
+import sys
 import time
 
 
@@ -180,6 +183,42 @@ def import_file(module_name, filepath):
 
     loader = importlib.machinery.SourceFileLoader(module_name, filepath)
     return loader.load_module()
+
+
+def load_any(name):
+    try:
+        return importlib.import_module(name)
+    except ImportError:
+        module_name, name = name.rsplit('.', 1)
+        module = importlib.import_module(module_name)
+        return getattr(module, name)
+
+
+def reload_any(ob):
+    '''reload 任何对象
+
+    例如::
+
+        reload_any(os.path)    # 直接重新加载对象
+        reload_any('sys.path') # 根据名称加载对象
+
+    :param ob: 对象(适合于有 __name__ 的对象)或对象名称
+    '''
+    # 对于模块，直接加载
+    if inspect.ismodule(ob):
+        return importlib.reload(ob)
+
+    # 获取模块名称和对象名称
+    if isinstance(ob, str):
+        module_name, name = ob.rsplit('.', 1)
+    else:
+        module_name = ob.__module__
+        name = ob.__name__
+
+    module = sys.modules[module_name]
+    module = importlib.reload(module)
+
+    return getattr(module, name)
 
 
 if __name__ == '__main__':
