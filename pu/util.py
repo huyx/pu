@@ -215,8 +215,11 @@ def reload_any(ob):
         module_name = ob.__module__
         name = ob.__name__
 
-    module = sys.modules[module_name]
-    module = importlib.reload(module)
+    module = sys.modules.get(module_name)
+    if module:
+        module = importlib.reload(module)
+    else:
+        module = importlib.import_module(module_name)
 
     return getattr(module, name)
 

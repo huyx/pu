@@ -59,6 +59,9 @@ pu.util
 - shorten
 - get_field(o, field_name)
 - set_field(o, field_name, value)
+- import_file
+- load_any
+- reload_any
 
 pu.dictutil
 -----------
