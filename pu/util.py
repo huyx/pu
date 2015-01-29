@@ -196,6 +196,17 @@ def load_any(name):
         return getattr(module, name)
 
 
+def _reload_module_by_name(module_name):
+    module = sys.modules.get(module_name)
+
+    if module:
+        module = importlib.reload(module)
+    else:
+        module = importlib.import_module(module_name)
+
+    return module
+
+
 def reload_any(ob):
     '''reload 任何对象
 
@@ -210,27 +221,25 @@ def reload_any(ob):
     if inspect.ismodule(ob):
         return importlib.reload(ob)
 
-    # 获取模块名称和对象名称
     if isinstance(ob, str):
-        if '.' in ob:
-            module_name, name = ob.rsplit('.', 1)
-        else:
-            module_name = ob
-            name = None
+        name = ob
+
+        # 作为模块名尝试一下
+        try:
+            return _reload_module_by_name(name)
+        except ImportError:
+            pass
+
+        # 一定是 "模块.对象" 的形式
+        assert '.' in name
+        module_name, ob_name = ob.rsplit('.', 1)
     else:
         module_name = ob.__module__
-        name = ob.__name__
+        ob_name = ob.__name__
 
-    module = sys.modules.get(module_name)
-    if module:
-        module = importlib.reload(module)
-    else:
-        module = importlib.import_module(module_name)
+    module = _reload_module_by_name(module_name)
 
-    if name:
-        return getattr(module, name)
-
-    return module
+    return getattr(module, ob_name)
 
 
 def make_key(args, kwargs, kwargs_mark=object()):

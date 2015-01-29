@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-version = '0.13.1'
+version = '0.13.2'
