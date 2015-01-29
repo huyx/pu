@@ -186,6 +186,8 @@ def import_file(module_name, filepath):
 
 
 def load_any(name):
+    '''根据对象名称加载对象
+    '''
     try:
         return importlib.import_module(name)
     except ImportError:
@@ -222,6 +224,26 @@ def reload_any(ob):
         module = importlib.import_module(module_name)
 
     return getattr(module, name)
+
+
+def make_key(args, kwargs, kwargs_mark=object()):
+    '''根据函数参数 args, kwargs 创建键值
+
+    特点: 生成一个没有嵌套（args 和 kwargs 的值中没有 tuple 值）的 tuple
+    限制: args 和 kwargs 的值必须 hashable
+
+    :param args: tuple
+    :param kwargs: dict
+    :param kwargs_mark: 在有 kwargs 非空的情况下，用来分割 args 和 kwargs
+    '''
+    key = args
+
+    if kwargs:
+        key += kwargs_mark
+        for item in sorted(kwargs.items):
+            key += item
+
+    return key
 
 
 if __name__ == '__main__':
