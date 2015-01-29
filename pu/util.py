@@ -212,7 +212,11 @@ def reload_any(ob):
 
     # 获取模块名称和对象名称
     if isinstance(ob, str):
-        module_name, name = ob.rsplit('.', 1)
+        if '.' in ob:
+            module_name, name = ob.rsplit('.', 1)
+        else:
+            module_name = ob
+            name = None
     else:
         module_name = ob.__module__
         name = ob.__name__
@@ -223,7 +227,10 @@ def reload_any(ob):
     else:
         module = importlib.import_module(module_name)
 
-    return getattr(module, name)
+    if name:
+        return getattr(module, name)
+
+    return module
 
 
 def make_key(args, kwargs, kwargs_mark=object()):
