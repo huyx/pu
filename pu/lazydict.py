@@ -25,11 +25,11 @@ def smart_get(ob, key, default=None):
         return _smart_get(ob, key, default)
 
     first, _, other = key.partition('.')
-    ob = _smart_get(ob, first)
+    child = _smart_get(ob, first)
 
-    assert ob is not None, '{} 没有 {}.'.format(ob, first)
+    assert child is not None, '{} 没有 {}.'.format(ob, first)
 
-    return smart_get(ob, other, default)
+    return smart_get(child, other, default)
 
 
 def _smart_set(ob, key, value):
@@ -46,12 +46,11 @@ def smart_set(ob, key, value):
         return _smart_set(ob, key, value)
 
     first, _, other = key.partition('.')
-    ob = _smart_get(ob, first)
+    child = _smart_get(ob, first)
 
-    assert ob is not None, '{} 没有 {}.'.format(ob, first)
+    assert child is not None, '{} 没有 {}.'.format(ob, first)
 
-    return smart_set(ob, other, value)
-
+    return smart_set(child, other, value)
 
 
 class lazydict(dict):
