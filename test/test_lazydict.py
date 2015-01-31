@@ -32,7 +32,14 @@ class TestLazydict(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.d.smart_get('a.b.xxxx')
 
-    def test_smart_set(self):
+    def test_smart_set_dict(self):
+        self.d['a'] = {}
+        value = 'Yeah!'
+        self.d.smart_set('a.b', value)
+        new_value = self.d.smart_get('a.b')
+        self.assertEqual(new_value, value)
+
+    def test_smart_set_attr(self):
         self.d['a'] = {'b': [lazydict]}
         value = 'Yeah!'
         self.d.smart_set('a.b.0.newattr', value)

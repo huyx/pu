@@ -36,7 +36,7 @@ def _smart_set(ob, key, value):
     if isinstance(ob, MutableSequence):
         ob[int(key)] = value
     elif isinstance(ob, MutableMapping):
-        ob.get(key, value)
+        ob[key] = value
     else:
         setattr(ob, key, value)
 
@@ -62,6 +62,6 @@ class lazydict(dict):
             default = factory()
         return dict.setdefault(self, key, default)
 
+    # 绑定 smart_get, smart_set
     smart_get = smart_get
     smart_set = smart_set
-
