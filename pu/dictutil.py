@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+'''
+大道至简，推荐使用 Dict。
+'''
+
 from collections import OrderedDict as _OrderedDict, Mapping
 
 
@@ -114,3 +118,17 @@ class DotOrderedDict(OrderedDict):
             OrderedDict.__delitem__(self, name)
         except KeyError:
             raise AttributeError('%r has not attr %r' % (self, name))
+
+
+class Dict(dict):
+    '''增强的 dict
+
+    - 转换成字符串时，按指定顺序显示字段，未指定顺序的按照 key 的排序
+    '''
+    _order_by = ()
+
+    def __repr__(self):
+        keys = [k for k in self._order_by if k in self]
+        keys.extend(sorted(k for k in self if k not in self._order_by))
+        items = ('{!r}: {!r}'.format(k, self[k]) for k in keys)
+        return '{{{}}}'.format(', '.join(items))
