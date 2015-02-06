@@ -44,8 +44,10 @@ class PubSub(object):
 
         logger.info('psubscribe({}, {})'.format(handler_info, patterns))
 
+        # 编译要订阅的模板
+        patterns = [re.compile(fnmatch.translate(pattern)) for pattern in patterns]
+
         for pattern in patterns:
-            pattern = re.compile(fnmatch.translate(pattern))
             self.pattern_handlers[pattern].append(handler_info)
             self.handler_patterns[handler_info].append(pattern)
 
@@ -79,7 +81,10 @@ class PubSub(object):
         '''
         handler_info = (handler, priority)
 
-        if not patterns:
+        if patterns:
+            # 编译要取消订阅的模板
+            patterns = [re.compile(fnmatch.translate(pattern)) for pattern in patterns]
+        else:
             patterns = self.handler_patterns[handler_info]
 
         logger.info('punsubscribe({}, {})'.format(handler_info, patterns))
