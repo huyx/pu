@@ -31,18 +31,18 @@ class PubSub(object):
         self.handler_patterns = defaultdict(list)
 
     def subscribe(self, handler, *channels, priority=0):
-        handler_info = (handler, priority)
+        logger.info('subscribe({}, {}, {})'.format(handler.__qualname__, priority, channels))
 
-        logger.info('subscribe({}, {})'.format(handler_info, channels))
+        handler_info = (handler, priority)
 
         for channel in channels:
             self.channel_handlers[channel].append(handler_info)
             self.handler_channels[handler_info].append(channel)
 
     def psubscribe(self, handler, *patterns, priority=0):
-        handler_info = (handler, priority)
+        logger.info('psubscribe({}, {}, {})'.format(handler.__qualname__, priority, patterns))
 
-        logger.info('psubscribe({}, {})'.format(handler_info, patterns))
+        handler_info = (handler, priority)
 
         # 编译要订阅的模板
         patterns = [re.compile(fnmatch.translate(pattern)) for pattern in patterns]
@@ -59,7 +59,7 @@ class PubSub(object):
         if not channels:
             channels = self.handler_channels[handler_info]
 
-        logger.info('unsubscribe({}, {})'.format(handler_info, channels))
+        logger.info('unsubscribe({}, {}, {})'.format(handler.__qualname__, priority, channels))
 
         for channel in channels:
             try:
@@ -87,7 +87,7 @@ class PubSub(object):
         else:
             patterns = self.handler_patterns[handler_info]
 
-        logger.info('punsubscribe({}, {})'.format(handler_info, patterns))
+        logger.info('punsubscribe({}, {}, {})'.format(handler.__qualname__, priority, patterns))
 
         for pattern in patterns:
             try:
