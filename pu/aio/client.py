@@ -48,12 +48,15 @@ class ReconnectingClient(Client):
                 yield from asyncio.sleep(self.retry_delay)
 
     def _replace_connection_lost(self, protocol):
-        # 截获 protocol 的 connection_lost 进行重连
-        old_connection_lost = protocol.connection_lost
+        # 避免重复替换 connection_lost 方法
+        if hasattr(protocol, '_orig_connection_lost'):
+            return
+
+        protocol._orig_connection_lost = protocol.connection_lost
 
         def connection_lost(exc):
             logger.info('连接断开，重新连接: %s', exc)
-            old_connection_lost(exc)
+            protocol._orig_connection_lost(exc)
             asyncio.async(self._connect(self.retry_delay))
 
         protocol.connection_lost = connection_lost
