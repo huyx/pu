@@ -178,6 +178,11 @@ def to_hex(value: bytes, delimiter=' ', lower=True):
     return delimiter.join(fmt % b for b in value)
 
 
+def dump_data(data: bytes, maxlength=80):
+    data = data[:maxlength]
+    return '({}) {} - {}'.format(len(data), to_hex(data), data)
+
+
 def import_file(module_name, filepath):
     import importlib.machinery
 
