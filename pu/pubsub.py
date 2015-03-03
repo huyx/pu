@@ -17,6 +17,13 @@ import re
 logger = logging.getLogger(__name__)
 
 
+def format_channels(channels, count=5):
+    if len(channels) < count:
+        return channels
+    omitted = '...({})...'.format(len(channels) - count)
+    return channels[:count] + (omitted,)
+
+
 class PubSub(object):
     class Stop(Exception):
         pass
@@ -31,7 +38,7 @@ class PubSub(object):
         self.handler_patterns = defaultdict(list)
 
     def subscribe(self, handler, *channels, priority=0):
-        logger.info('subscribe({}, {}, {})'.format(handler.__qualname__, priority, channels))
+        logger.info('subscribe({}, {}, {})'.format(handler.__qualname__, priority, format_channels(channels)))
 
         handler_info = (handler, priority)
 
@@ -40,7 +47,7 @@ class PubSub(object):
             self.handler_channels[handler_info].append(channel)
 
     def psubscribe(self, handler, *patterns, priority=0):
-        logger.info('psubscribe({}, {}, {})'.format(handler.__qualname__, priority, patterns))
+        logger.info('psubscribe({}, {}, {})'.format(handler.__qualname__, priority, format_channels(patterns)))
 
         handler_info = (handler, priority)
 
@@ -57,9 +64,9 @@ class PubSub(object):
         handler_info = (handler, priority)
 
         if not channels:
-            channels = self.handler_channels[handler_info]
+            channels = tuple(self.handler_channels[handler_info])
 
-        logger.info('unsubscribe({}, {}, {})'.format(handler.__qualname__, priority, channels))
+        logger.info('unsubscribe({}, {}, {})'.format(handler.__qualname__, priority, format_channels(channels)))
 
         for channel in channels:
             try:
@@ -83,11 +90,11 @@ class PubSub(object):
 
         if patterns:
             # 编译要取消订阅的模板
-            patterns = [re.compile(fnmatch.translate(pattern)) for pattern in patterns]
+            patterns = tuple(re.compile(fnmatch.translate(pattern)) for pattern in patterns)
         else:
-            patterns = self.handler_patterns[handler_info]
+            patterns = tuple(self.handler_patterns[handler_info])
 
-        logger.info('punsubscribe({}, {}, {})'.format(handler.__qualname__, priority, patterns))
+        logger.info('punsubscribe({}, {}, {})'.format(handler.__qualname__, priority, format_channels(patterns)))
 
         for pattern in patterns:
             try:
