@@ -1,3 +1,8 @@
+V0.17.3(2015-3-17)
+------------------
+
+- dictutil 增加 LastUpdatedOrderedDict
+
 V0.17.2(2015-3-3)
 -----------------
 
@@ -31,7 +36,7 @@ V0.15.2(2015-2-6)
 V0.15.1(2015-2-6)
 -----------------
 
-- BUGFIX: pubsub 中 psubscribe 时产生异常 
+- BUGFIX: pubsub 中 psubscribe 时产生异常
 
 V0.15.0(2015-2-6)
 -----------------
@@ -83,7 +88,7 @@ V0.14.4(2015-2-3)
 0.12.2(2015-1-20)
 ----------------
 
-- 添加 pu.misc.aiohttp.reloadable_handler 支持 web handler 的自动重新加载 
+- 添加 pu.misc.aiohttp.reloadable_handler 支持 web handler 的自动重新加载
 
 0.12.1(2015-1-7)
 ----------------

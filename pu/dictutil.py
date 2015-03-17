@@ -68,7 +68,7 @@ class Dot:
 
     def get(self, key, default=None):
         return self._d.get(key, default)
-    
+
     def setdefault(self, key, default):
         return self._d.setdefault(key, default)
 
@@ -132,3 +132,14 @@ class Dict(dict):
         keys.extend(sorted(k for k in self if k not in self._order_by))
         items = ('{!r}: {!r}'.format(k, self[k]) for k in keys)
         return '{{{}}}'.format(', '.join(items))
+
+class LastUpdatedOrderedDict(OrderedDict):
+    '''保持更新的顺序的有序字典
+
+    来源: https://docs.python.org/3.4/library/collections.html#ordereddict-examples-and-recipes
+    '''
+
+    def __setitem__(self, key, value):
+        if key in self:
+            del self[key]
+        OrderedDict.__setitem__(self, key, value)
