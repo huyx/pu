@@ -267,6 +267,45 @@ def make_key(args, kwargs, kwargs_mark=object()):
     return key
 
 
+def default(value, exceptions=Exception):
+    '''函数出现异常时返回缺省值
+
+    用法1:
+
+    default_int = default(0)(int)
+
+    用法2:
+
+    @default(0)
+    def my_int(value):
+        return int(value)
+
+    用法3:
+
+    @default('-type error-', TypeError)
+    @default('-value error-', ValueError)
+    def my_int(value):
+        return int(value)
+
+    示例:
+
+    >>> default('错了')(int)(None)
+    '错了'
+    >>> default('类型错误', TypeError)(int)(None)
+    '类型错误'
+    >>> default('类型或值错误', (TypeError, ValueError))(int)('not a integer')
+    '类型或值错误'
+    '''
+    def outer(func):
+        def inner(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except exceptions:
+                return value
+        return inner
+    return outer
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
