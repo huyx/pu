@@ -46,7 +46,9 @@ class Timer:
     def clean(self):
         self.timer = None
         self.callback = None
-        del self.manager[self.timer_id]
+
+        if self.manager.get(self.timer_id) == self:
+            del self.manager[self.timer_id]
 
 
 class TimerManager(dict):
