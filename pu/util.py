@@ -179,8 +179,9 @@ def to_hex(value: bytes, delimiter=' ', lower=True):
 
 
 def dump_data(data: bytes, maxlength=80):
+    dlen = len(data)
     data = data[:maxlength]
-    return '({}) {} - {}'.format(len(data), to_hex(data), data)
+    return '({}) {} - {}'.format(dlen, to_hex(data), data)
 
 
 def import_file(module_name, filepath):
