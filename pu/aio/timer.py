@@ -13,6 +13,8 @@ class Timer:
         self.loop = loop or asyncio.get_event_loop()
 
     def set_timeout(self, delay):
+        assert not self.__timer
+
         self.__timer = self.loop.call_later(delay, self._timeout)
 
     def cancel_timeout(self):
