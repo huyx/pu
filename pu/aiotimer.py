@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import asyncio
+import logging
 
+
+logger = logging.getLogger('aiotimer')
 
 __all__ = ['TimerManager', 'timer_manager']
 
@@ -16,8 +19,10 @@ class Timer:
         self.manager = manager or timer_manager
 
     def set_timer_id(self, timer_id):
-        assert self.manager[self.timer_id] == self
-        del self.manager[self.timer_id]
+        if self.manager[self.timer_id] == self:
+            del self.manager[self.timer_id]
+        else:
+            logger.warning('%s not in TimerManager', self.timer_id)
         self.manager[timer_id] = self
 
     def start(self):
