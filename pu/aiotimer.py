@@ -19,7 +19,7 @@ class Timer:
         self.manager = manager or timer_manager
 
     def set_timer_id(self, timer_id):
-        if self.manager[self.timer_id] == self:
+        if self.manager.get(self.timer_id) == self:
             del self.manager[self.timer_id]
         else:
             logger.warning('%s not in TimerManager', self.timer_id)
