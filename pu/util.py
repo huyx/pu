@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from collections import Mapping
+from distutils.version import StrictVersion, LooseVersion
 import importlib
 import inspect
 import re
@@ -305,6 +306,24 @@ def default(value, exceptions=Exception):
                 return value
         return inner
     return outer
+
+
+def _cmp(a, b):
+    return (a > b) - (a < b)
+
+def compare_versions(version1, version2):
+    try:
+        return _cmp(StrictVersion(version1), StrictVersion(version2))
+    # in case of abnormal version number, fall back to LooseVersion
+    except ValueError:
+        pass
+    try:
+        return _cmp(LooseVersion(version1), LooseVersion(version2))
+    except TypeError:
+    # certain LooseVersion comparions raise due to unorderable types,
+    # fallback to string comparison
+        return _cmp([str(v) for v in LooseVersion(version1).version],
+                   [str(v) for v in LooseVersion(version2).version])
 
 
 if __name__ == '__main__':
