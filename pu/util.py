@@ -326,6 +326,17 @@ def compare_versions(version1, version2):
                    [str(v) for v in LooseVersion(version2).version])
 
 
+def format_size(size):
+    if size > 1000 * 1000:
+        return '%.1fMB' % (size / 1000.0 / 1000)
+    elif size > 10 * 1000:
+        return '%ikB' % (size / 1000)
+    elif size > 1000:
+        return '%.1fkB' % (size / 1000.0)
+    else:
+        return '%ibytes' % size
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
