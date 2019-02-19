@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from distutils.core import setup
 import os.path
 import sys
 
-import pu
+from setuptools import setup
 
+import pu
 
 classifiers = [
     "Programming Language :: Python",
@@ -14,7 +14,7 @@ classifiers = [
     "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    ]
+]
 
 
 def read(fname):
@@ -25,25 +25,28 @@ def read(fname):
         content = open(fname).read().decode('utf-8')
     return content.strip()
 
+
 def read_files(*fnames):
     return '\r\n\r\n\r\n'.join(map(read, fnames))
 
+
 setup(
-    name = 'pu',
+    name='pu',
     version=pu.version,
-    packages = [
+    packages=[
         'pu',
         'pu.aio',
         'pu.aio.protocols',
         'pu.pattern',
         'pu.misc',
-        ],
-    description = 'Python utils',
-    long_description = read_files('README.rst', 'CHANGES.rst'),
-    license = 'GNU Library or Lesser General Public License (LGPL)',
-    author = 'yuxin',
-    author_email = 'ycyuxin@gmail.com',
-    url = 'https://github.com/huyx/pu',
-    keywords = ['python', 'util'],
-    classifiers = classifiers, 
-    )
+    ],
+    description='Python utils',
+    long_description=read_files('README.md', 'CHANGELOG.md'),
+    long_description_content_type='text/markdown',
+    license='GNU Library or Lesser General Public License (LGPL)',
+    author='yuxin',
+    author_email='ycyuxin@gmail.com',
+    url='https://github.com/huyx/pu',
+    keywords=['python', 'util'],
+    classifiers=classifiers,
+)

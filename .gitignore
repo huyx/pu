@@ -1,8 +1,10 @@
+/.idea
 /.project
 /.pydevproject
 /.settings
 /MANIFEST
 /build
 /dist
+/pu.egg-info
 
 *.pyc
