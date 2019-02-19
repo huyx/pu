@@ -57,7 +57,7 @@ class ReconnectingClient(Client):
         def connection_lost(exc):
             logger.info('连接断开，重新连接: %s', exc)
             protocol._orig_connection_lost(exc)
-            asyncio.async(self._connect(self.retry_delay))
+            asyncio.Task(self._connect(self.retry_delay))
 
         protocol.connection_lost = connection_lost
 
